@@ -1,0 +1,76 @@
+{
+	"name": "asm",
+	"displayName": "Shark asm",
+	"description": "asm for VSCode",
+	"version": "0.0.1",
+	"publisher": "Shark",
+	"icon": "images/icon.png",
+	"author": {
+		"name": "Shark"
+	},
+	"repository": {
+		"type": "",
+		"url": ""
+	},
+	"engines": {
+		"vscode": "^1.23.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Formatters",
+		"Snippets"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"languages": [
+			{
+				"id": "asm",
+				"aliases": [
+					"asm",
+					"asm"
+				],
+				"extensions": [
+					".inc",
+					".asm",
+					".s"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "asm",
+				"scopeName": "source.inc, source.asm, source.s, text.rc",
+				"path": "./syntaxes/asm_highlight.json"
+			}
+		],
+		"snippets": [
+			{
+				"language": "asm",
+				"path": "./snippets/snippets.json"
+			}
+		],
+		"themes": [
+                  {
+                        "id": "asm",
+                        "label": "asm Shark",
+				"uiTheme": "vs",
+                        "path": "./syntaxes/asm_theme.json"
+                  }
+            ],
+		"commands": [
+			{
+			    "command": "myExtension.sayHello",
+			    "title": "Outline"
+			}
+		],
+		"views": {
+			"explorer": [
+				{
+			  		"id": "documentOutline",
+		  			"name": "Shark test"
+				}
+			]
+		}
+	}
+}

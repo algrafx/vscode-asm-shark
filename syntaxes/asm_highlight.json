@@ -1,0 +1,141 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Shark asm",
+	"patterns": [
+		{	"include": "#asmos"		},
+		{	"include": "#fnames"		},
+		{	"include": "#strong"		},
+		{	"include": "#stuff"		},
+		{	"include": "#call"		},
+		{	"include": "#invoke"		},
+		{	"include": "#constant"		},
+		{	"include": "#keyword"		},
+		{	"include": "#string"		},
+		{	"include": "#labels"		},
+		{	"include": "#Comment"		},
+		{	"include": "#comment2"		}
+	],
+	"repository": {
+		"fnames": {
+			"patterns": [
+				{
+					"name": "fnames.language.asm",
+					"match": "(?<=call\\s)\\w*(?=,|\\s)"
+				}
+			]
+		},
+		"asmos": {
+			"patterns": [
+				{
+					"name": "asmos.language.asm",
+					"match": "\\b((?i)(os|bpt|wpt|dpt|qpt|opt|proc|endp))\\b"
+				}
+			]
+		},
+		"strong": {
+			"patterns": [
+				{
+					"name": "strong.language.asm",
+					"match": "\\b((?i)(or|dup|stdcall|ret|endm|macro|local|label|equ|dd|db|dw|dq|AL|AH|AX|EAX|RAX|BL|BH|BX|EBX|RBX|CL|CH|CX|ECX|RCX|DL|DH|DX|EDX|RDX|BP|EBP|RBP|SP|ESP|RSP|SI|ESI|RSI|DI|EDI|RDI|R8D|R8|R9D|R9|R10D|R10|R11D|R11|R12D|R12|R13D|R13|R14D|R14|R15D|R15|CS|DS|ES|FS|GS|SS|DR0|DR1|DR2|DR3|DR6|DR7|XMM0|XMM1|XMM2|XMM3|XMM4|XMM5|XMM6|XMM7|XMM8|XMM9|XMM10|XMM11|XMM12|XMM13|XMM14|XMM15|YMM0|YMM1|YMM2|YMM3|YMM4|YMM5|YMM6|YMM7|YMM8|YMM9|YMM10|YMM11|YMM12|YMM13|YMM14|YMM15))\\b"
+				}
+			]
+		},
+		"stuff": {
+			"patterns": [
+				{
+					"name": "stuff.language.asm",
+					"match": "\\w*_\\w*"
+				}
+			]
+		},
+		"call": {
+			"patterns": [
+				{
+					"name": "call.language.asm",
+					"match": "\\bcall"
+				}
+			]
+		},
+		"invoke": {
+			"patterns": [
+				{
+					"name": "invoke.language.asm",
+					"match": "\\binvokecall"
+				}
+			]
+		},
+		"constant": {
+			"patterns": [
+				{
+					"name": "constant.language.asm",
+					"match": "\\.((?i)(386|386P|387|486|486P|586|586P|686|686P|K3D|MMX|XMM))\\b"
+				},
+				{
+					"name": "constant.numeric.asm",
+					"match": "([0-9]|0[a-fA-F])[0-9a-fA-F]{0,19}+([hH]|\\b)"
+				}
+			]
+		},
+		"keyword": {
+			"patterns": [
+				{
+					"name": "keyword.control.asm",
+					"match": "(^|\\s)\\b((?i)(ELSE|ELSEIF|ELSEIF2|IF|IF2|IFB|IFNB|IFDEF|IFNDEF|IFDIF|IFE|IFIDN|ENDIF|FOR|FORC|GOTO|REPEAT|WHILE|IRP|REPT))\\b"
+				},
+				{
+					"name": "keyword.control.asm",
+					"match": "\\.((?i)(IF|ELSE|ELSEIF|ENDIF|WHILE|ENDW|REPEAT|UNTIL|UNTILCXZ|BREAK|CONTINUE|ERR|ERR2|ERRB|ERRDEF|ERRDIF|ERRE|ERRIDN|ERRNB|ERRNDEF|ERRNZ))\\b"
+				},
+				{
+					"name": "keyword.other.asm",
+					"match": "(\\.((?i)(DATA|FARDATA))\\?)|(\\.((?i)(ALLOCSTACK|ENDPROLOG|PUSHFRAME|PUSHREG|SAVEREG|SAVEXMM128|SETFRAME|CREF|XLIST|LIST|LISTALL|LISTIF|LISTMACRO|LISTMACROALL|NOCREF|NOLIST|NOLISTIF|NOLISTMACRO|TFCOND|FPO|RADIX|SAFESEH|386|386P|387|486|486P|586|586P|686|686P|K3D|MMX|XMM|MODEL|STACK|STARTUP|ALPHA|DOSSEG|SEQ|CODE|CONST|DATA|DOSSEG|EXIT|FARDATA))\\b)"
+				},
+				{
+					"name": "keyword.other.asm",
+					"match": "(@((?i)(FARDATA))\\?)|(@((?i)(DATE|TIME|CPU|ENVIRON|INTERFACE|VERSION|FILECUR|FILENAME|LINE|CATSTR|INSTR|SIZESTR|SUBSTR|CODE|CODESIZE|CURSEG|DATA|DATASIZE|FARDATA|MODEL|STACK|WORDSIZE))\\b)"
+				},
+				{
+					"name": "keyword.other.asm",
+					"match": "\\b((?i)(TEXTEQU|PAGE|SUBTITLE|TITLE|EXITM|PURGE|ALIAS|ASSUME|COMMENT|ECHO|END|INCLUDE|INCLUDELIB|OPTION|POPCONTEXT|PUSHCONTEXT|INVOKE|PROC|PROTO|COMM|EXTERN|EXTERNDEF|INCLUDELIB|PUBLIC|ASSUME|END|ENDS|GROUP|SEGMENT|ENDS|RECORD|STRUCT|TYPEDEF|UNION))\\b"
+				}
+			]
+		},
+		"labels": {
+			"patterns": [
+				{
+					"name": "labels.language.asm",
+					"match": "^\\w*:"
+				},
+				{
+					"name": "labels.language.asm",
+					"match": "^\\w*(?=\\sproc|\\slabel|\\send)"
+				}
+			]
+		},
+		"string": {
+			"patterns": [
+				{
+					"name": "string.quoted.double.asm",
+					"match": "[\"'].*?[';\"]"
+				}
+			]
+		},
+		"Comment": {
+			"patterns": [
+				{
+					"name": "Comment.language.asm",
+					"match": ";;.*$"
+				}
+			]
+		},
+		"comment2": {
+			"patterns": [
+				{
+					"name": "comment2.language.asm",
+					"match": ";.*$"
+				}
+			]
+		}
+	},
+	"scopeName": "source.inc, source.asm, source.s, text.rc"
+}

@@ -1,0 +1,11 @@
+{
+	"comments": {
+		"lineComment": ";"
+	},
+	"folding": {
+		"markers": {
+			"start": "^\\w*\\s*proc",
+			"end": "^\\w*\\s*endp"
+		}
+	}
+}

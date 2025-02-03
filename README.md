@@ -7,4 +7,4 @@ asm Shark highlight in Visual Studio Code
 - Language syntaxes with theme
 
 ## License 
-MIT
+CC0 1.0

@@ -1,4 +1,3 @@
-'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = void 0;
 const vscode = require("vscode");
@@ -30,6 +29,7 @@ class asmConfigDocumentSymbolProvider {
             const	iconModule = vscode.SymbolKind.Module;
             const	iconNamespace = vscode.SymbolKind.Namespace;
             const	iconNull = vscode.SymbolKind.Null;
+            const	iconNone = vscode.SymbolKind;
             const	iconNumber = vscode.SymbolKind.Number;
             const	iconObject = vscode.SymbolKind.Object;
             const	iconOperator = vscode.SymbolKind.Operator;
@@ -42,6 +42,7 @@ class asmConfigDocumentSymbolProvider {
             for (let i = 0; i < document.lineCount; i++) {
                 const line = document.lineAt(i);
                 const tokens = line.text.split(/\s/);
+                const tokens2 = line.text.split(",");
                 if (line.text.includes ("\tproc")) {
                     const proc_symbol = new vscode.DocumentSymbol(tokens[0],'\tproc',iconFunction,line.range,line.range);
                     nodes[nodes.length-1].push(proc_symbol);
@@ -58,8 +59,12 @@ class asmConfigDocumentSymbolProvider {
                     }
                     if (!first_message) {nodes.pop()}
                 }
+                else if (line.text.startsWith(";;")) {
+                    const label_symbol = new vscode.DocumentSymbol(line.text,'',iconNull,line.range,line.range);
+                    nodes[nodes.length-1].push(label_symbol);
+                }
                 else if (line.text.includes("label\tnear")) {
-                    const label_symbol = new vscode.DocumentSymbol('\t\t\t\t'+tokens[0],'global label',iconString,line.range,line.range);
+                    const label_symbol = new vscode.DocumentSymbol(tokens[0],'',iconString,line.range,line.range);
                     nodes[nodes.length-1].push(label_symbol);
                 }
                 else if (line.text.startsWith("\t.code") || line.text.startsWith("\t.data")) {
@@ -69,14 +74,12 @@ class asmConfigDocumentSymbolProvider {
                 else if (line.text.includes("cmp\teax,WM_") || line.text.includes("pmsg,WM_")) {
                     if (!first_message) {nodes.pop()}
                     if (first_message) {first_message = false}
-                    const tokens2 = line.text.split(",");
                     const msg_symbol = new vscode.DocumentSymbol(tokens2[1],'',iconEvent,line.range,line.range);
                     nodes[nodes.length-1].push(msg_symbol);
                     nodes.push(msg_symbol.children);
                 }
-                else if (line.text.includes("ax,VK_") || line.text.includes("ax,ID_")) {
-                    const tokens2 = line.text.split(",");
-                    const msg_symbol = new vscode.DocumentSymbol(tokens2[1],'',iconField,line.range,line.range);
+                else if (line.text.includes("ax,VK_") || line.text.includes("ax,ID_")|| line.text.includes("param,VK_")) {
+                    const msg_symbol = new vscode.DocumentSymbol('\t'+tokens2[1],'',iconField,line.range,line.range);
                     nodes[nodes.length-1].push(msg_symbol);
                 }
                 else if (line.text.startsWith("_start:")) {

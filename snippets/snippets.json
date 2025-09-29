@@ -1,27 +1,27 @@
 {
     "MessageBox": {
-        "prefix": "alMB",
+        "prefix": "aaMB",
         "body": [
             "invokecall\tMessageBox,0,os $0,esp,0"
         ],
         "description": "Fast MessageBox"
     },
     "SendMessage": {
-        "prefix": "alMes",
+        "prefix": "aaMes",
         "body": [
             "invokecall\tSendMessage,wphwnd,WM_$0,wpw,wpl"
         ],
         "description": "Fast SendMessage"
     },
     "ShellExecute": {
-        "prefix": "alExe",
+        "prefix": "aaExe",
         "body": [
             "invokecall\tShellExecute,0,0,os $0,0,0,SW_SHOWNORMAL"
         ],
         "description": "Fast ShellExecute"
     },
     "SaveAs": {
-        "prefix": "alSave",
+        "prefix": "aaSave",
         "body": [
             "invokecall\tsaveAs,from$1,size$2"
         ],
@@ -35,10 +35,11 @@
         "description": "Fast label"
     },
     "Separator": {
-        "prefix": "alSep",
+        "prefix": "aaSep",
         "body": [
             ";------------------------------------------------------------------"
         ],
         "description": "Fast separator"
     }
 }
+

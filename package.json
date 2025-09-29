@@ -2,7 +2,7 @@
 	"name": "asm",
 	"displayName": "Shark asm",
 	"description": "asm for VSCode",
-	"version": "0.0.1",
+	"version": "0.1.2",
 	"publisher": "Shark",
 	"icon": "images/icon.png",
 	"author": {

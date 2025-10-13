@@ -71,14 +71,14 @@ class asmConfigDocumentSymbolProvider {
                     const segment_symbol = new vscode.DocumentSymbol(tokens[1],'',iconArray,line.range,line.range);
                     nodes[nodes.length-1].push(segment_symbol);
                 }
-                else if (line.text.includes("cmp\teax,WM_") || line.text.includes("pmsg,WM_")) {
+                else if (line.text.search(/cmp\t\w*,WM_/) !=-1 && !line.text.startsWith(";")) {
                     if (!first_message) {nodes.pop()}
                     if (first_message) {first_message = false}
                     const msg_symbol = new vscode.DocumentSymbol(tokens2[1],'',iconEvent,line.range,line.range);
                     nodes[nodes.length-1].push(msg_symbol);
                     nodes.push(msg_symbol.children);
                 }
-                else if (line.text.includes("ax,VK_") || line.text.includes("ax,ID_")|| line.text.includes("param,VK_")) {
+                else if (line.text.search(/cmp\t\w*,VK_/) !=-1 || line.text.search(/cmp\t\w*,ID_/) !=-1 && !line.text.startsWith(";")) {
                     const msg_symbol = new vscode.DocumentSymbol('\t'+tokens2[1],'',iconField,line.range,line.range);
                     nodes[nodes.length-1].push(msg_symbol);
                 }
@@ -87,7 +87,7 @@ class asmConfigDocumentSymbolProvider {
                     nodes[nodes.length-1].push(start_symbol);
                     nodes.push(start_symbol.children);
                 }
-                else if (line.text.search(/^\w*:/) != -1 && !line.text.startsWith("_start:")) {
+                else if (line.text.search(/^\w*:/) != -1 && !line.text.startsWith("_") && !line.text.startsWith("not")) {
                     const label_symbol = new vscode.DocumentSymbol('\t\t\t\t'+tokens[0],'',iconKey,line.range,line.range);
                     nodes[nodes.length-1].push(label_symbol);
                 }

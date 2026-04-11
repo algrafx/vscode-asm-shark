@@ -7,6 +7,8 @@
 		{	"include": "#strong"		},
 		{	"include": "#stuff"		},
 		{	"include": "#call"		},
+		{	"include": "#invoke3"		},
+		{	"include": "#invoke2"		},
 		{	"include": "#invoke"		},
 		{	"include": "#constant"		},
 		{	"include": "#keyword"		},
@@ -20,7 +22,7 @@
 			"patterns": [
 				{
 					"name": "fnames.language.asm",
-					"match": "(?<=call\\s)\\w*(?=,|\\s)"
+					"match": "(?<=call\\d*\\s)\\w*(?=,|\\s)"
 				}
 			]
 		},
@@ -36,7 +38,7 @@
 			"patterns": [
 				{
 					"name": "strong.language.asm",
-					"match": "\\b((?i)(or|dup|stdcall|ret|endm|macro|local|label|equ|dd|db|dw|dq|AL|AH|AX|EAX|RAX|BL|BH|BX|EBX|RBX|CL|CH|CX|ECX|RCX|DL|DH|DX|EDX|RDX|BP|EBP|RBP|SP|ESP|RSP|SI|ESI|RSI|DI|EDI|RDI|R8D|R8|R9D|R9|R10D|R10|R11D|R11|R12D|R12|R13D|R13|R14D|R14|R15D|R15|CS|DS|ES|FS|GS|SS|DR0|DR1|DR2|DR3|DR6|DR7|XMM0|XMM1|XMM2|XMM3|XMM4|XMM5|XMM6|XMM7|XMM8|XMM9|XMM10|XMM11|XMM12|XMM13|XMM14|XMM15|YMM0|YMM1|YMM2|YMM3|YMM4|YMM5|YMM6|YMM7|YMM8|YMM9|YMM10|YMM11|YMM12|YMM13|YMM14|YMM15))\\b"
+					"match": "\\b((?i)(or|dup|stdcall|ret|endm|macro|local|label|equ|du|dd|db|dw|dq|AL|AH|AX|EAX|RAX|BL|BH|BX|EBX|RBX|CL|CH|CX|ECX|RCX|DL|DH|DX|EDX|RDX|BP|EBP|RBP|SP|ESP|RSP|SI|ESI|RSI|DI|EDI|RDI|R8D|R8|R9D|R9|R10D|R10|R11D|R11|R12D|R12|R13D|R13|R14D|R14|R15D|R15|CS|DS|ES|FS|GS|SS|DR0|DR1|DR2|DR3|DR6|DR7|XMM0|XMM1|XMM2|XMM3|XMM4|XMM5|XMM6|XMM7|XMM8|XMM9|XMM10|XMM11|XMM12|XMM13|XMM14|XMM15|YMM0|YMM1|YMM2|YMM3|YMM4|YMM5|YMM6|YMM7|YMM8|YMM9|YMM10|YMM11|YMM12|YMM13|YMM14|YMM15))\\b"
 				}
 			]
 		},
@@ -44,7 +46,7 @@
 			"patterns": [
 				{
 					"name": "stuff.language.asm",
-					"match": "\\w*_\\w*"
+					"match": "\\w+_\\w*"
 				}
 			]
 		},
@@ -53,6 +55,22 @@
 				{
 					"name": "call.language.asm",
 					"match": "\\bcall"
+				}
+			]
+		},
+		"invoke3": {
+			"patterns": [
+				{
+					"name": "invoke3.language.asm",
+					"match": "\\binvokecall3"
+				}
+			]
+		},
+		"invoke2": {
+			"patterns": [
+				{
+					"name": "invoke2.language.asm",
+					"match": "\\binvokecall2"
 				}
 			]
 		},
@@ -108,7 +126,7 @@
 				},
 				{
 					"name": "labels.language.asm",
-					"match": "^\\w*(?=\\sproc|\\slabel|\\send)"
+					"match": "^\\w*(?=\\s*proc|\\s*label|\\s*end|\\s*struct)"
 				}
 			]
 		},
@@ -137,5 +155,5 @@
 			]
 		}
 	},
-	"scopeName": "source.inc, source.asm, source.s, text.rc"
+	"scopeName": "source.asm"
 }

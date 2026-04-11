@@ -1,5 +1,11 @@
 # Change Log
 
+##0.3.0 [11/04/2026]
+code much cleaner now
+
+##0.2.0 [02/04/2026]
+cosmetic fixes
+
 ##0.1.2 [09/29/2025]
 small highlight & explorer fixes
 snippets now aa* not al*

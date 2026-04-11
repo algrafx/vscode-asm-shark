@@ -1,98 +1,187 @@
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.activate = void 0;
 const vscode = require("vscode");
 function activate(context) {
-    context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider({ scheme: "file", language: "asm" }, new asmConfigDocumentSymbolProvider()));
+    //vscode.window.showInformationMessage('Test message!');
+    context.subscriptions.push(
+        vscode.languages.registerDocumentSymbolProvider(
+            { scheme: "file", language: "asm" },
+            new SharkAsmSymbolProvider()
+        )
+    );
+    const winApiProvider = new WinApiDataProvider();
+    vscode.window.registerTreeDataProvider('documentOutline', winApiProvider);
+    context.subscriptions.push(
+        vscode.commands.registerCommand('myExtension.sayHello', () => {
+            vscode.window.showInformationMessage('Shark ASM Extension is active!');
+        })
+    );
+    vscode.window.onDidChangeActiveTextEditor(() => winApiProvider.refresh());
+    vscode.workspace.onDidSaveTextDocument(() => winApiProvider.refresh());
 }
-exports.activate = activate;
-class asmConfigDocumentSymbolProvider {
+const svgData = '<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="16" rx="2" fill="#474747"/><text x="50%" y="50%" font-size="10" font-family="Arial" fill="#00FF00" text-anchor="middle" dominant-baseline="central">-</text></svg>';
+const mySvgIcon = vscode.Uri.parse(
+    `data:image/svg+xml;base64,${Buffer.from(svgData).toString('base64')}`
+);
+class SharkAsmSymbolProvider {
     provideDocumentSymbols(document, token) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const symbols = [];
-            const nodes = [symbols];
-            let inside_proc = false;
-            let first_message = true;
-            const	iconArray = vscode.SymbolKind.Array;
-            const	iconBoolean = vscode.SymbolKind.Boolean;
-            const	iconClass = vscode.SymbolKind.Class;
-            const	iconConstant = vscode.SymbolKind.Constant;
-            const	iconConstructor = vscode.SymbolKind.Constructor;
-            const	iconEnum = vscode.SymbolKind.Enum;
-            const	iconEnumMember = vscode.SymbolKind.EnumMember;
-            const	iconEvent = vscode.SymbolKind.Event;
-            const	iconField = vscode.SymbolKind.Field;
-            const	iconFile = vscode.SymbolKind.File;
-            const	iconFunction = vscode.SymbolKind.Function;
-            const	iconInterface = vscode.SymbolKind.Interface;
-            const	iconKey = vscode.SymbolKind.Key;
-            const	iconMethod = vscode.SymbolKind.Method;
-            const	iconModule = vscode.SymbolKind.Module;
-            const	iconNamespace = vscode.SymbolKind.Namespace;
-            const	iconNull = vscode.SymbolKind.Null;
-            const	iconNone = vscode.SymbolKind;
-            const	iconNumber = vscode.SymbolKind.Number;
-            const	iconObject = vscode.SymbolKind.Object;
-            const	iconOperator = vscode.SymbolKind.Operator;
-            const	iconPackage = vscode.SymbolKind.Package;
-            const	iconProperty = vscode.SymbolKind.Property;
-            const	iconString = vscode.SymbolKind.String;
-            const	iconStruct = vscode.SymbolKind.Struct;
-            const	iconTypeParameter = vscode.SymbolKind.TypeParameter;
-            const	iconVariable = vscode.SymbolKind.Variable;
+            const nodes = [symbols]; 
+            const Kind = vscode.SymbolKind;
             for (let i = 0; i < document.lineCount; i++) {
                 const line = document.lineAt(i);
-                const tokens = line.text.split(/\s/);
-                const tokens2 = line.text.split(",");
-                if (line.text.includes ("\tproc")) {
-                    const proc_symbol = new vscode.DocumentSymbol(tokens[0],'\tproc',iconFunction,line.range,line.range);
-                    nodes[nodes.length-1].push(proc_symbol);
-                    if (!inside_proc) {
-                        nodes.push(proc_symbol.children);
-                        inside_proc = true;
-                        first_message = true;
+                const text = line.text;
+                const trimmed = text.trim();
+                if (!trimmed || trimmed.startsWith(";")) {
+                    if (trimmed.startsWith(";;")) {
+                        const sym = new vscode.DocumentSymbol(trimmed, '', Kind.Null, line.range, line.range);
+                        nodes[nodes.length - 1].push(sym);
                     }
+                    continue;
                 }
-                else if (line.text.includes("\tendp")) {
-                    if (inside_proc) {
+                const procMatch = text.match(/^(\w+)\s+(proc|PROC)\b/);
+                if (procMatch) {
+                    const procName = procMatch[1];
+                    const procSymbol = new vscode.DocumentSymbol(procName, '', Kind.Function, line.range, line.range);
+                    nodes[nodes.length - 1].push(procSymbol);
+                    nodes.push(procSymbol.children);
+                    continue;
+                }
+                if (/\b(endp|ENDP)\b/.test(trimmed)) {
+                    if (nodes.length > 1) {
                         nodes.pop();
-                        inside_proc = false;
                     }
-                    if (!first_message) {nodes.pop()}
+                    continue;
                 }
-                else if (line.text.startsWith(";;")) {
-                    const label_symbol = new vscode.DocumentSymbol(line.text,'',iconNull,line.range,line.range);
-                    nodes[nodes.length-1].push(label_symbol);
+                if (trimmed.startsWith(".code") || trimmed.startsWith(".data")) {
+                    const segName = trimmed.split(/\s+/)[0];
+                    const segSymbol = new vscode.DocumentSymbol(segName, '', Kind.Module, line.range, line.range);
+                    nodes[nodes.length - 1].push(segSymbol);
+                    continue;
                 }
-                else if (line.text.includes("label\tnear")) {
-                    const label_symbol = new vscode.DocumentSymbol(tokens[0],'',iconString,line.range,line.range);
-                    nodes[nodes.length-1].push(label_symbol);
+                if (/(cmp\s+eax,|pmsg,)\s*(WM_\w+)/i.test(trimmed)) {
+                    const msgMatch = trimmed.match(/WM_\w+/i);
+                    const msgSymbol = new vscode.DocumentSymbol(msgMatch[0], '', Kind.Event, line.range, line.range);
+                    nodes[nodes.length - 1].push(msgSymbol);
+                    continue;
                 }
-                else if (line.text.startsWith("\t.code") || line.text.startsWith("\t.data")) {
-                    const segment_symbol = new vscode.DocumentSymbol(tokens[1],'',iconArray,line.range,line.range);
-                    nodes[nodes.length-1].push(segment_symbol);
+                const labelMatch = trimmed.match(/^(\w+):/);
+                if (labelMatch) {
+                    const labelName = labelMatch[1];
+                    const isNotAllowed = labelName.startsWith("not") || (labelName.startsWith("_") && labelName !== "_start");
+                    if (!isNotAllowed) {
+                        let kind = vscode.SymbolKind.Key;
+                        let detail = '';
+                        let intext = '\t\t\t\t';
+                        if (labelName === "_start") {
+                            kind = vscode.SymbolKind.Interface;
+                            detail = 'Entry Point';
+                            intext = '';
+                        }
+                        const labelSymbol = new vscode.DocumentSymbol(intext+
+                            labelName, 
+                            detail, 
+                            kind, 
+                            line.range, 
+                            line.range
+                        );
+                        nodes[nodes.length - 1].push(labelSymbol);
+                        continue;
+                    }
                 }
-                else if (line.text.search(/cmp\t\w*,WM_/) !=-1 && !line.text.startsWith(";")) {
-                    if (!first_message) {nodes.pop()}
-                    if (first_message) {first_message = false}
-                    const msg_symbol = new vscode.DocumentSymbol(tokens2[1],'',iconEvent,line.range,line.range);
-                    nodes[nodes.length-1].push(msg_symbol);
-                    nodes.push(msg_symbol.children);
-                }
-                else if (line.text.search(/cmp\t\w*,VK_/) !=-1 || line.text.search(/cmp\t\w*,ID_/) !=-1 && !line.text.startsWith(";")) {
-                    const msg_symbol = new vscode.DocumentSymbol('\t'+tokens2[1],'',iconField,line.range,line.range);
-                    nodes[nodes.length-1].push(msg_symbol);
-                }
-                else if (line.text.startsWith("_start:")) {
-                    const start_symbol = new vscode.DocumentSymbol(tokens[0],'entry point',iconInterface,line.range,line.range);
-                    nodes[nodes.length-1].push(start_symbol);
-                    nodes.push(start_symbol.children);
-                }
-                else if (line.text.search(/^\w*:/) != -1 && !line.text.startsWith("_") && !line.text.startsWith("not")) {
-                    const label_symbol = new vscode.DocumentSymbol('\t\t\t\t'+tokens[0],'',iconKey,line.range,line.range);
-                    nodes[nodes.length-1].push(label_symbol);
+                if (/\blabel\s+near\b/i.test(trimmed)) {
+                    const name = trimmed.split(/\s+/)[0];
+                    const sym = new vscode.DocumentSymbol(name, '', Kind.String, line.range, line.range);
+                    nodes[nodes.length - 1].push(sym);
                 }
             }
             resolve(symbols);
         });
     }
 }
+class WinApiDataProvider {
+    constructor() {
+        this._onDidChangeTreeData = new vscode.EventEmitter();
+        this.onDidChangeTreeData = this._onDidChangeTreeData.event;
+    }
+    refresh() { this._onDidChangeTreeData.fire(); }
+    getTreeItem(element) { return element; }
+    async getChildren(element) {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return [];
+        const document = editor.document;
+        if (element && element.children) {
+            return element.children;
+        }
+        const treeMap = new Map();
+        let currentProc = "Global Scope";
+        const apiRegex = /\b(invoke|call|invokecall|invokecall2|invokecall3)\s+([A-Z][a-zA-Z0-9_]+)/g;
+        for (let i = 0; i < document.lineCount; i++) {
+            const line = document.lineAt(i).text;
+            const procMatch = line.match(/^(\w+)\s+(proc|PROC)\b/);
+            if (procMatch) currentProc = procMatch[1];
+            if (/\b(endp|ENDP)\b/.test(line.trim())) currentProc = "Global Scope";
+            let match;
+            while ((match = apiRegex.exec(line)) !== null) {
+                const apiName = match[2];
+                const range = new vscode.Range(i, 0, i, line.length);
+                if (!treeMap.has(currentProc)) treeMap.set(currentProc, new Map());
+                const procApis = treeMap.get(currentProc);
+                if (!procApis.has(apiName)) procApis.set(apiName, []);
+                procApis.get(apiName).push({ line: i, range });
+            }
+        }
+        const result = [];
+        treeMap.forEach((apis, procName) => {
+            const procItem = new WinApiItem(
+                procName, 
+                `(${apis.size} APIs)`, 
+                null, 
+                vscode.TreeItemCollapsibleState.Collapsed
+            );
+            procItem.iconPath = new vscode.ThemeIcon("symbol-function");
+            const apiItems = [];
+            apis.forEach((occurrences, apiName) => {
+                if (occurrences.length === 1) {
+                    const occ = occurrences[0];
+                    apiItems.push(new WinApiItem(
+                        `${apiName} (Line ${occ.line + 1})`, 
+                        '', 
+                        occ.range, 
+                        vscode.TreeItemCollapsibleState.None
+                    ));
+                } else {
+                    const apiFolder = new WinApiItem(
+                        apiName, 
+                        `(${occurrences.length} calls)`, 
+                        null, 
+                        vscode.TreeItemCollapsibleState.Collapsed
+                    );
+                    apiFolder.iconPath = new vscode.ThemeIcon("symbol-method");
+                    apiFolder.children = occurrences.map(occ => 
+                        new WinApiItem(`Line ${occ.line + 1}`, '', occ.range, vscode.TreeItemCollapsibleState.None)
+                    );
+                    apiItems.push(apiFolder);
+                }
+            });
+            procItem.children = apiItems;//.sort((a, b) => a.label.localeCompare(b.label));
+            result.push(procItem);
+        });
+        return result;//.sort((a, b) => a.label.localeCompare(b.label));
+    }
+}
+class WinApiItem extends vscode.TreeItem {
+    constructor(label, detail, range, collapsibleState) {
+        super(label, collapsibleState);
+        this.description = detail;
+        //this.iconPath = range ? new vscode.ThemeIcon("location") : new vscode.ThemeIcon("folder");
+        this.iconPath = range ? mySvgIcon : new vscode.ThemeIcon("folder");
+        if (range) {
+            this.command = {
+                command: 'vscode.open',
+                title: "Go to",
+                arguments: [vscode.window.activeTextEditor.document.uri, { selection: range }]
+            };
+        }
+    }
+}
+exports.activate = activate;

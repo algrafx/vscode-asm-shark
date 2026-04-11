@@ -4,8 +4,8 @@
 	},
 	"folding": {
 		"markers": {
-			"start": "^\\w*\\s*proc",
-			"end": "^\\w*\\s*endp"
+			"start": "^\\s*\\w+\\s+proc",
+			"end": "^\\s*\\w+\\s+endp"
 		}
 	}
 }

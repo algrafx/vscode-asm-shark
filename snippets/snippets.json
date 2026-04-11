@@ -1,29 +1,29 @@
 {
-    "MessageBox": {
+    "x32 MessageBox": {
         "prefix": "aaMB",
         "body": [
-            "invokecall\tMessageBox,0,os $0,esp,0"
+            "invokecall\tMessageBox,0,os $1,esp,0$0"
         ],
-        "description": "Fast MessageBox"
+        "description": "Fast MessageBox x32"
     },
     "SendMessage": {
         "prefix": "aaMes",
         "body": [
-            "invokecall\tSendMessage,wphwnd,WM_$0,wpw,wpl"
+            "invokecall\tSendMessage,wphwnd,WM_$1,wpw,wpl$0"
         ],
         "description": "Fast SendMessage"
     },
     "ShellExecute": {
         "prefix": "aaExe",
         "body": [
-            "invokecall\tShellExecute,0,0,os $0,0,0,SW_SHOWNORMAL"
+            "invokecall\tShellExecute,0,0,os $1,0,0,SW_SHOWNORMAL$0"
         ],
         "description": "Fast ShellExecute"
     },
     "SaveAs": {
         "prefix": "aaSave",
         "body": [
-            "invokecall\tsaveAs,from$1,size$2"
+            "invokecall\tsaveAs,${1:from},${2:size}$0"
         ],
         "description": "Fast saveAs"
     },
@@ -42,4 +42,3 @@
         "description": "Fast separator"
     }
 }
-

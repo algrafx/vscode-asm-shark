@@ -2,16 +2,17 @@
 	"name": "asm",
 	"displayName": "Shark asm",
 	"description": "asm for VSCode",
-	"version": "0.1.2",
+	"version": "0.3.0",
 	"publisher": "Shark",
 	"icon": "images/icon.png",
 	"author": {
 		"name": "Shark"
 	},
 	"repository": {
-		"type": "",
-		"url": ""
+		"type": "git",
+		"url": "https://github.com/algrafx/vscode-asm-shark"
 	},
+	"homepage": "https://github.com/algrafx/vscode-asm-shark",
 	"engines": {
 		"vscode": "^1.23.0"
 	},
@@ -26,13 +27,10 @@
 			{
 				"id": "asm",
 				"aliases": [
-					"asm",
-					"asm"
+					"Shark ASM","asm","s"
 				],
 				"extensions": [
-					".inc",
-					".asm",
-					".s"
+					".asm",".s",".inc",".rc"
 				],
 				"configuration": "./language-configuration.json"
 			}
@@ -40,7 +38,7 @@
 		"grammars": [
 			{
 				"language": "asm",
-				"scopeName": "source.inc, source.asm, source.s, text.rc",
+				"scopeName": "source.asm",
 				"path": "./syntaxes/asm_highlight.json"
 			}
 		],
@@ -51,24 +49,25 @@
 			}
 		],
 		"themes": [
-                  {
-                        "id": "asm",
-                        "label": "asm Shark",
+			{
+				"id": "asm",
+				"label": "asm Shark",
 				"uiTheme": "vs",
-                        "path": "./syntaxes/asm_theme.json"
-                  }
-            ],
+				"path": "./syntaxes/asm_theme.json"
+			}
+		],
 		"commands": [
 			{
-			    "command": "myExtension.sayHello",
-			    "title": "Outline"
+				"command": "myExtension.sayHello",
+				"title": "Shark: Say Hello"
 			}
 		],
 		"views": {
 			"explorer": [
 				{
-			  		"id": "documentOutline",
-		  			"name": "Shark test"
+					"id": "documentOutline",
+					"name": "API's",
+					"icon": "images/icon.png"
 				}
 			]
 		}

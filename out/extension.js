@@ -58,7 +58,7 @@ class SharkAsmSymbolProvider {
                     nodes[nodes.length - 1].push(segSymbol);
                     continue;
                 }
-                if (/(cmp\s+eax,|pmsg,)\s*(WM_\w+)/i.test(trimmed)) {
+                if (/(cmp\s+\w+,)\s*(WM_\w+)/i.test(trimmed)) {
                     const msgMatch = trimmed.match(/WM_\w+/i);
                     const msgSymbol = new vscode.DocumentSymbol(msgMatch[0], '', Kind.Event, line.range, line.range);
                     nodes[nodes.length - 1].push(msgSymbol);

@@ -47,8 +47,23 @@ class SharkAsmSymbolProvider {
                     continue;
                 }
                 if (/\b(endp|ENDP)\b/.test(trimmed)) {
+                    while (nodes.length > 1) {
+                        nodes.pop();
+                    }
+                    continue;
+                }
+                const macroMatch = text.match(/^(\w+)\s+(macro|MACRO)\b/);
+                if (macroMatch) {
+                    const procName = macroMatch[1];
+                    const procSymbol = new vscode.DocumentSymbol(procName, '', Kind.Enum, line.range, line.range);
+                    nodes[nodes.length - 1].push(procSymbol);
+                    nodes.push(procSymbol.children);
+                    continue;
+                }
+                if (/\b(endm|ENDM)\b/.test(trimmed)) {
                     if (nodes.length > 1) {
                         nodes.pop();
+                        //nodes[nodes.length - 1].push(new vscode.DocumentSymbol('-', '', vscode.SymbolKind.Constant, line.range, line.range));
                     }
                     continue;
                 }
@@ -58,16 +73,20 @@ class SharkAsmSymbolProvider {
                     nodes[nodes.length - 1].push(segSymbol);
                     continue;
                 }
-                if (/(cmp\s+\w*,)\s*(ID_\w+)/i.test(trimmed)) {
-                    const msgMatch = trimmed.match(/ID_\w+/i);
-                    const msgSymbol = new vscode.DocumentSymbol(msgMatch[0], '', Kind.Field, line.range, line.range);
-                    nodes[nodes.length - 1].push(msgSymbol);
+                if (/(cmp\s+\w*,)\s*((ID_\w+)|(VK_\w+))/i.test(trimmed)) {
+                    const msgMatch = trimmed.match(/((ID_\w+)|(VK_\w+))/i);
+                    const idSymbol = new vscode.DocumentSymbol('\t'+msgMatch[0], '', Kind.Field, line.range, line.range);
+                    nodes[nodes.length - 1].push(idSymbol);
                     continue;
                 }
                 if (/(cmp\s+\w*,)\s*(WM_\w+)/i.test(trimmed)) {
                     const msgMatch = trimmed.match(/WM_\w+/i);
+                    if (nodes.length > 2) { 
+                        nodes.pop(); 
+                    }
                     const msgSymbol = new vscode.DocumentSymbol(msgMatch[0], '', Kind.Event, line.range, line.range);
                     nodes[nodes.length - 1].push(msgSymbol);
+                    nodes.push(msgSymbol.children);
                     continue;
                 }
                 const labelMatch = trimmed.match(/^(\w+):/);
@@ -96,7 +115,7 @@ class SharkAsmSymbolProvider {
                 }
                 if (/\blabel\s+near\b/i.test(trimmed)) {
                     const name = trimmed.split(/\s+/)[0];
-                    const sym = new vscode.DocumentSymbol(name, '', Kind.String, line.range, line.range);
+                    const sym = new vscode.DocumentSymbol(name,'', Kind.Constant, line.range, line.range);
                     nodes[nodes.length - 1].push(sym);
                 }
             }
@@ -119,6 +138,7 @@ class WinApiDataProvider {
             return element.children;
         }
         const treeMap = new Map();
+        const allApisMap = new Map();
         let currentProc = "Global Scope";
         const apiRegex = /\b(invoke|call|invokecall|invokecall2|invokecall3)\s+([A-Z][a-zA-Z0-9_]+)/g;
         for (let i = 0; i < document.lineCount; i++) {
@@ -129,50 +149,59 @@ class WinApiDataProvider {
             let match;
             while ((match = apiRegex.exec(line)) !== null) {
                 const apiName = match[2];
-                const range = new vscode.Range(i, 0, i, line.length);
+                const range = new vscode.Range(i, match.index, i, match.index + match[0].length);
+                const occ = { line: i, range };
+
                 if (!treeMap.has(currentProc)) treeMap.set(currentProc, new Map());
                 const procApis = treeMap.get(currentProc);
                 if (!procApis.has(apiName)) procApis.set(apiName, []);
-                procApis.get(apiName).push({ line: i, range });
+                procApis.get(apiName).push(occ);
+
+                if (!allApisMap.has(apiName)) allApisMap.set(apiName, []);
+                allApisMap.get(apiName).push(occ);
             }
         }
-        const result = [];
-        treeMap.forEach((apis, procName) => {
-            const procItem = new WinApiItem(
-                procName, 
-                `(${apis.size} APIs)`, 
-                null, 
-                vscode.TreeItemCollapsibleState.Collapsed
-            );
-            procItem.iconPath = new vscode.ThemeIcon("symbol-function");
-            const apiItems = [];
-            apis.forEach((occurrences, apiName) => {
-                if (occurrences.length === 1) {
-                    const occ = occurrences[0];
-                    apiItems.push(new WinApiItem(
-                        `${apiName} (Line ${occ.line + 1})`, 
-                        '', 
-                        occ.range, 
-                        vscode.TreeItemCollapsibleState.None
-                    ));
-                } else {
-                    const apiFolder = new WinApiItem(
-                        apiName, 
-                        `(${occurrences.length} calls)`, 
-                        null, 
-                        vscode.TreeItemCollapsibleState.Collapsed
-                    );
-                    apiFolder.iconPath = new vscode.ThemeIcon("symbol-method");
-                    apiFolder.children = occurrences.map(occ => 
-                        new WinApiItem(`Line ${occ.line + 1}`, '', occ.range, vscode.TreeItemCollapsibleState.None)
-                    );
-                    apiItems.push(apiFolder);
-                }
+        if (!element) {
+            const rootByProc = new WinApiItem("By Procedure", `(${treeMap.size})`, null, vscode.TreeItemCollapsibleState.Expanded);
+            rootByProc.iconPath = new vscode.ThemeIcon("symbol-namespace");
+            rootByProc.children = [];
+            treeMap.forEach((apis, procName) => {
+                const procItem = new WinApiItem(procName, `(${apis.size} APIs)`, null, vscode.TreeItemCollapsibleState.Collapsed);
+                procItem.iconPath = new vscode.ThemeIcon("symbol-function");
+                procItem.children = this._buildFlatApiNodes(apis, false);
+                rootByProc.children.push(procItem);
             });
-            procItem.children = apiItems;//.sort((a, b) => a.label.localeCompare(b.label));
-            result.push(procItem);
+
+            const rootAllApis = new WinApiItem("All APIs", `(${allApisMap.size})`, null, vscode.TreeItemCollapsibleState.Collapsed);
+            rootAllApis.iconPath = new vscode.ThemeIcon("list-flat");
+            rootAllApis.children = this._buildFlatApiNodes(allApisMap, true);
+
+            return [rootByProc, rootAllApis];
+        }
+
+        return [];
+    }
+
+    _buildFlatApiNodes(apisMap, shouldSort) {
+        const items = [];
+        apisMap.forEach((occurrences, apiName) => {
+            if (occurrences.length === 1) {
+                const occ = occurrences[0];
+                items.push(new WinApiItem(`${apiName} (Line ${occ.line + 1})`, '', occ.range, vscode.TreeItemCollapsibleState.None));
+            } else {
+                const apiFolder = new WinApiItem(apiName, `(${occurrences.length} calls)`, null, vscode.TreeItemCollapsibleState.Collapsed);
+                apiFolder.iconPath = new vscode.ThemeIcon("symbol-method");
+                apiFolder.children = occurrences.map(occ => 
+                    new WinApiItem(`Line ${occ.line + 1}`, '', occ.range, vscode.TreeItemCollapsibleState.None)
+                );
+                items.push(apiFolder);
+            }
         });
-        return result;//.sort((a, b) => a.label.localeCompare(b.label));
+
+        if (shouldSort) {
+            return items.sort((a, b) => a.label.localeCompare(b.label));
+        }
+        return items;
     }
 }
 class WinApiItem extends vscode.TreeItem {

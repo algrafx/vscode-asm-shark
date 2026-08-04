@@ -7,7 +7,8 @@ asm highlight in Visual Studio Code
 - Language syntaxes with theme
 
   
-![Preview](images/screenshot.png)
+<img width="100%" alt="Preview" src="images/screenshot.png" />
+
 
 
 

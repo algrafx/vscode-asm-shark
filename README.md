@@ -6,7 +6,9 @@ asm highlight in Visual Studio Code
 
 - Language syntaxes with theme
 
-- <img width="100%" alt="Preview" src="https://raw.githubusercontent.com/algrafx/vscode-asm-shark/main/images/screenshot.png" />
+  
+- <img width="100%" alt="Preview" src="images/screenshot.png" />
+
 
 
 ## License 

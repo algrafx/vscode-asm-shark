@@ -1,12 +1,12 @@
-# asm Shark highlight and theme
+# asm highlight and theme
 
-asm Shark highlight in Visual Studio Code
+asm highlight in Visual Studio Code
 
 ## Features
 
 - Language syntaxes with theme
 
-- <img width="1410" height="722" alt="0987" src="https://github.com/user-attachments/assets/9d8d3978-3ec5-4a42-8305-71312cd391db" />
+- <img width="100%" alt="Preview" src="https://raw.githubusercontent.com/algrafx/vscode-asm-shark/main/images/screenshot.png" />
 
 
 ## License 

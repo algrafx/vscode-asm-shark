@@ -1,5 +1,11 @@
 # Change Log
 
+##0.3.3 [04/08/2026]
+small fixes
+
+##0.3.2 [25/07/2026]
+Improved API explorer
+
 ##0.3.0 [11/04/2026]
 code much cleaner now
 
@@ -14,8 +20,7 @@ snippets now aa* not al*
 a lot of new features
 
 ##0.0.2 [04/18/2023]
-
 much more features
 
 ##0.0.1 [04/11/2023]
-first version.
+first version

@@ -1,4 +1,29 @@
 {
+    "start/end": {
+        "prefix": "aastart",
+        "body": [
+            ";\tdb\t\"start---\"",
+            ";\tdb\t\"---end\""
+        ],
+        "description": ""
+    },
+    "msg": {
+        "prefix": "msg",
+        "body": [
+            "cmp\twpmsg,WM_${1:message}",
+            "jne\tnot${2:label1}",
+            "$0",
+            "not${3:label2}:"
+        ],
+        "description": "msg"
+    },
+    "": {
+        "prefix": "invokecall",
+        "body": [
+            "invokecall\t"
+        ],
+        "description": ""
+    },
     "x32 MessageBox": {
         "prefix": "aaMB",
         "body": [

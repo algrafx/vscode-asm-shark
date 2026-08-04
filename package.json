@@ -1,8 +1,8 @@
 {
 	"name": "asm",
-	"displayName": "Shark asm",
+	"displayName": "asm Shark",
 	"description": "asm for VSCode",
-	"version": "0.3.0",
+	"version": "0.3.3",
 	"publisher": "Shark",
 	"icon": "images/icon.png",
 	"author": {
@@ -27,10 +27,15 @@
 			{
 				"id": "asm",
 				"aliases": [
-					"Shark ASM","asm","s"
+					"asm Shark",
+					"asm",
+					"s"
 				],
 				"extensions": [
-					".asm",".s",".inc",".rc"
+					".asm",
+					".s",
+					".inc",
+					".rc"
 				],
 				"configuration": "./language-configuration.json"
 			}

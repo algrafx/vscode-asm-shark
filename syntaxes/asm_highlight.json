@@ -2,6 +2,8 @@
 	"name": "asm Shark",
 	"patterns": [
 		{	"include": "#asmos"		},
+		{	"include": "#xymm"		},
+		{	"include": "#jumps"		},
 		{	"include": "#fnames"		},
 		{	"include": "#strong"		},
 		{	"include": "#stuff"		},
@@ -10,41 +12,72 @@
 		{	"include": "#invoke2"		},
 		{	"include": "#invoke"		},
 		{	"include": "#constant"		},
-		{	"include": "#keyword"		},
 		{	"include": "#string"		},
 		{	"include": "#labels"		},
-		{	"include": "#Comment"		},
-		{	"include": "#comment2"		}
+		{	"include": "#Comment1"		},
+		{	"include": "#keyword"		},
+		{	"include": "#comment2"		},
+		{	"include": "#brackets"		}		
 	],
 	"repository": {
 		"fnames": {
 			"patterns": [
 				{
-					"name": "fnames.language.asm",
+					"name": "fnames.asm entity.name.function",
 					"match": "(?<=call\\d*\\s)\\w*(?=,|\\s)"
+				},
+				{
+					"name": "xymm.asm strong.asm entity.name.function",
+					"match": "(?i)\\b[xy]mm([0-9]|1[0-5])\\b"
+				}
+			]
+		},
+		"jumps": {
+			"patterns": [
+				{
+					"match": "\\b((?i)(jecxz|jcxz|jmp|jb|jc|jnae|jae|jnb|jnc|je|jz|jne|jnz|jbe|jna|ja|jnbe|jl|jnge|jge|jnl|jle|jng|jg|jnle))\\b(?:\\s+([a-zA-Z_@$?.][\\w@$?.]*))?",
+					"captures": {
+						"1": {
+							"name": "jumps.asm strong.asm storage"
+						},
+						"3": {
+							"name": "labels.asm entity.name.function"
+						}
+					}
 				}
 			]
 		},
 		"asmos": {
 			"patterns": [
 				{
-					"name": "asmos.language.asm",
-					"match": "\\b((?i)(os|bpt|wpt|dpt|qpt|opt|proc|endp))\\b"
+					"match": "\\b((?i)(os))\\b(?:\\s+([a-zA-Z_@$?.][\\w@$?.]*))?",
+					"captures": {
+						"1": {
+							"name": "asmos.asm strong.asm storage"
+						},
+						"3": {
+							"name": "labels.asm entity.name.function"
+						}
+					}
+				},
+				{
+					"name": "asmos.asm strong.asm storage",
+					"match": "\\b((?i)(bpt|wpt|dpt|qpt|ypt|xpt|fpt|tpt|opt|proc|endp|invoke))\\b"
 				}
 			]
 		},
 		"strong": {
 			"patterns": [
 				{
-					"name": "strong.language.asm",
-					"match": "\\b((?i)(or|dup|stdcall|ret|endm|macro|local|label|equ|du|dd|db|dw|dq|AL|AH|AX|EAX|RAX|BL|BH|BX|EBX|RBX|CL|CH|CX|ECX|RCX|DL|DH|DX|EDX|RDX|BP|EBP|RBP|SP|ESP|RSP|SI|ESI|RSI|DI|EDI|RDI|R8D|R8|R9D|R9|R10D|R10|R11D|R11|R12D|R12|R13D|R13|R14D|R14|R15D|R15|CS|DS|ES|FS|GS|SS|DR0|DR1|DR2|DR3|DR6|DR7|XMM0|XMM1|XMM2|XMM3|XMM4|XMM5|XMM6|XMM7|XMM8|XMM9|XMM10|XMM11|XMM12|XMM13|XMM14|XMM15|YMM0|YMM1|YMM2|YMM3|YMM4|YMM5|YMM6|YMM7|YMM8|YMM9|YMM10|YMM11|YMM12|YMM13|YMM14|YMM15))\\b"
+					"name": "defblack.asm strong.asm",
+					"match": "\\b((?i)(or|dup|stdcall|ret|endm|macro|local|label|equ|du|dd|db|dw|dq|al|ah|ax|eax|rax|bl|bh|bx|ebx|rbx|cl|ch|cx|ecx|rcx|dl|dh|dx|edx|rdx|bp|ebp|rbp|sp|esp|rsp|si|esi|rsi|di|edi|rdi|r([89]|1[0-5])[dwb]?|cs|ds|es|fs|gs|ss|dr[0-7]))\\b"
 				}
 			]
 		},
 		"stuff": {
 			"patterns": [
 				{
-					"name": "stuff.language.asm",
+					"name": "stuff.asm strong.asm markup.changed",
 					"match": "\\w+_\\w*"
 				}
 			]
@@ -52,7 +85,7 @@
 		"call": {
 			"patterns": [
 				{
-					"name": "call.language.asm",
+					"name": "call.asm strong.asm entity.name",
 					"match": "\\bcall"
 				}
 			]
@@ -60,7 +93,7 @@
 		"invoke3": {
 			"patterns": [
 				{
-					"name": "invoke3.language.asm",
+					"name": "invoke3.asm strong.asm storage",
 					"match": "\\binvokecall3"
 				}
 			]
@@ -68,7 +101,7 @@
 		"invoke2": {
 			"patterns": [
 				{
-					"name": "invoke2.language.asm",
+					"name": "invoke2.asm strong.asm entity.name",
 					"match": "\\binvokecall2"
 				}
 			]
@@ -76,7 +109,7 @@
 		"invoke": {
 			"patterns": [
 				{
-					"name": "invoke.language.asm",
+					"name": "call.asm entity.name",
 					"match": "\\binvokecall"
 				}
 			]
@@ -84,8 +117,8 @@
 		"constant": {
 			"patterns": [
 				{
-					"name": "constant.language.asm",
-					"match": "\\.((?i)(386|386P|387|486|486P|586|586P|686|686P|K3D|MMX|XMM))\\b"
+					"name": "constant.language.asm string.regexp",
+					"match": "\\.((?i)(386|386P|387|486|486p|586|586p|686|686p|k3d|mmx|xmm))\\b"
 				},
 				{
 					"name": "constant.numeric.asm",
@@ -93,63 +126,82 @@
 				}
 			]
 		},
+		"Comment1": {
+			"patterns": [
+				{
+					"name": "Comment1.asm storage strong.asm",
+					"match": ";;.*$"
+				}
+			]
+		},
 		"keyword": {
 			"patterns": [
 				{
-					"name": "keyword.control.asm",
-					"match": "(^|\\s)\\b((?i)(ELSE|ELSEIF|ELSEIF2|IF|IF2|IFB|IFNB|IFDEF|IFNDEF|IFDIF|IFE|IFIDN|ENDIF|FOR|FORC|GOTO|REPEAT|WHILE|IRP|REPT))\\b"
+					"name": "keyword.asm keyword.control.asm",
+					"match": "\\b((?i)(elseif2|elseif|else|endif|endw|ifndef|ifdef|ifidn|ifdif|ifnb|ifb|ife|if2|if|forc|for|goto|repeat|while|irp|rept))\\b"
 				},
 				{
-					"name": "keyword.control.asm",
-					"match": "\\.((?i)(IF|ELSE|ELSEIF|ENDIF|WHILE|ENDW|REPEAT|UNTIL|UNTILCXZ|BREAK|CONTINUE|ERR|ERR2|ERRB|ERRDEF|ERRDIF|ERRE|ERRIDN|ERRNB|ERRNDEF|ERRNZ))\\b"
+					"name": "keyword.asm keyword.control.asm",
+					"match": "\\.((?i)(elseif|else|endif|endw|errndef|erridn|errdif|errdef|errnb|errnz|errb|erre|err2|err|if|while|repeat|untilcxz|until|break|continue))\\b"
 				},
 				{
-					"name": "keyword.other.asm",
-					"match": "(\\.((?i)(DATA|FARDATA))\\?)|(\\.((?i)(ALLOCSTACK|ENDPROLOG|PUSHFRAME|PUSHREG|SAVEREG|SAVEXMM128|SETFRAME|CREF|XLIST|LIST|LISTALL|LISTIF|LISTMACRO|LISTMACROALL|NOCREF|NOLIST|NOLISTIF|NOLISTMACRO|TFCOND|FPO|RADIX|SAFESEH|386|386P|387|486|486P|586|586P|686|686P|K3D|MMX|XMM|MODEL|STACK|STARTUP|ALPHA|DOSSEG|SEQ|CODE|CONST|DATA|DOSSEG|EXIT|FARDATA))\\b)"
+					"name": "keyword.asm strong.asm storage.type.asm",
+					"match": "(\\.((?i)(fardata|data))\\?)|(\\.((?i)(allocstack|endprolog|pushframe|pushreg|savereg|savexmm128|setframe|listmacroall|listmacro|listall|listif|list|nolistmacro|nolistif|nolist|nocref|cref|xlist|tfcond|safeseh|startup|dosseg|fardata|alpha|model|stack|radix|const|code|data|exit|fpo|seq))\\b)"
 				},
 				{
-					"name": "keyword.other.asm",
-					"match": "(@((?i)(FARDATA))\\?)|(@((?i)(DATE|TIME|CPU|ENVIRON|INTERFACE|VERSION|FILECUR|FILENAME|LINE|CATSTR|INSTR|SIZESTR|SUBSTR|CODE|CODESIZE|CURSEG|DATA|DATASIZE|FARDATA|MODEL|STACK|WORDSIZE))\\b)"
+					"name": "stuff.asm storage.type.asm",
+					"match": "(@((?i)(fardata))\\?)|(@((?i)(interface|filename|codesize|datasize|wordsize|environ|version|filecur|catstr|sizestr|substr|curseg|fardata|instr|model|stack|date|time|code|data|cpu|line))\\b)"
 				},
 				{
-					"name": "keyword.other.asm",
-					"match": "\\b((?i)(TEXTEQU|PAGE|SUBTITLE|TITLE|EXITM|PURGE|ALIAS|ASSUME|COMMENT|ECHO|END|INCLUDE|INCLUDELIB|OPTION|POPCONTEXT|PUSHCONTEXT|INVOKE|PROC|PROTO|COMM|EXTERN|EXTERNDEF|INCLUDELIB|PUBLIC|ASSUME|END|ENDS|GROUP|SEGMENT|ENDS|RECORD|STRUCT|TYPEDEF|UNION))\\b"
+					"name": "keyword.asm storage.type.asm",
+					"match": "\\b((?i)(popcontext|pushcontext|includelib|externdef|subtitle|textequ|comment|include|typedef|assume|extern|option|public|record|segment|struct|title|union|alias|endp|endm|ends|exitm|group|page|proc|proto|purge|comm|echo|end))\\b"
 				}
 			]
 		},
 		"labels": {
 			"patterns": [
-				{
-					"name": "labels.language.asm",
-					"match": "^\\w*:"
-				},
-				{
-					"name": "labels.language.asm",
-					"match": "^\\w*(?=\\s*proc|\\s*label|\\s*end|\\s*struct)"
-				}
+			{
+				"name": "fnames.asm entity.name.function",
+				"match": "^@@\\w+:"
+			},
+			{
+				"name": "fnames.asm entity.name.function",
+				"match": "^\\w+:"
+			},
+			{
+				"name": "fnames.asm entity.name.function",
+				"match": "^\\w+(?=\\s+(?:proc|label|struct|endp)\\b)"
+			}
 			]
 		},
 		"string": {
 			"patterns": [
 				{
-					"name": "string.quoted.double.asm",
+					"name": "string.quoted.double.asm constant",
 					"match": "[\"'].*?[';\"]"
-				}
-			]
-		},
-		"Comment": {
-			"patterns": [
-				{
-					"name": "Comment.language.asm",
-					"match": ";;.*$"
 				}
 			]
 		},
 		"comment2": {
 			"patterns": [
 				{
-					"name": "comment2.language.asm",
+					"name": "comment2.asm markup.ignored",
 					"match": ";.*$"
+				}
+			]
+		},
+		"brackets": {
+			"patterns": [
+				{
+					"begin": "\\[",
+					"end": "\\]",
+					"contentName": "fnames.asm entity.name.function",
+					"patterns": [
+						{ "include": "#asmos" },
+						{ "include": "#strong" },
+						{ "include": "#xymm" },
+						{ "include": "#constant" }
+					]
 				}
 			]
 		}

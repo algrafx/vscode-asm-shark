@@ -2,7 +2,7 @@
 	"name": "asm",
 	"displayName": "asm Shark",
 	"description": "asm for VSCode",
-	"version": "0.3.3",
+	"version": "0.3.4",
 	"publisher": "Shark",
 	"icon": "images/icon.png",
 	"author": {
@@ -65,6 +65,13 @@
 			{
 				"command": "myExtension.sayHello",
 				"title": "Shark: Say Hello"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "asmShark.spacesToTabs",
+				"key": "ctrl+alt+t",
+				"when": "editorTextFocus"
 			}
 		],
 		"views": {

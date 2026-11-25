@@ -145,7 +145,7 @@
 					"match": "\\.((?i)(elseif|else|endif|endw|errndef|erridn|errdif|errdef|errnb|errnz|errb|erre|err2|err|if|while|repeat|untilcxz|until|break|continue))\\b"
 				},
 				{
-					"name": "keyword.asm strong.asm storage.type.asm",
+					"name": "asmos.asm strong.asm storage.type.asm",
 					"match": "(\\.((?i)(fardata|data))\\?)|(\\.((?i)(allocstack|endprolog|pushframe|pushreg|savereg|savexmm128|setframe|listmacroall|listmacro|listall|listif|list|nolistmacro|nolistif|nolist|nocref|cref|xlist|tfcond|safeseh|startup|dosseg|fardata|alpha|model|stack|radix|const|code|data|exit|fpo|seq))\\b)"
 				},
 				{

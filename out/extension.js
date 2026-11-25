@@ -38,7 +38,6 @@ function activate(context) {
 				return str.split('\t ').join('\t\t');
 			};
 			editor.edit(editBuilder => {
-				// Ïðîâåðÿåì, åñòü ëè õîòÿ áû îäíî íåïóñòîå âûäåëåíèå
 				const hasSelection = editor.selections.some(sel => !sel.isEmpty);
 
 				if (hasSelection) {

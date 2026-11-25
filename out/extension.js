@@ -38,7 +38,7 @@ function activate(context) {
 				return str.split('\t ').join('\t\t');
 			};
 			editor.edit(editBuilder => {
-				// Ïðîâåðÿåì, åñòü ëè õîòÿ áû îäíî íåïóñòîå âûäåëåíèå
+				// ÃÃ°Ã®Ã¢Ã¥Ã°Ã¿Ã¥Ã¬, Ã¥Ã±Ã²Ã¼ Ã«Ã¨ ÃµÃ®Ã²Ã¿ Ã¡Ã» Ã®Ã¤Ã­Ã® Ã­Ã¥Ã¯Ã³Ã±Ã²Ã®Ã¥ Ã¢Ã»Ã¤Ã¥Ã«Ã¥Ã­Ã¨Ã¥
 				const hasSelection = editor.selections.some(sel => !sel.isEmpty);
 
 				if (hasSelection) {
@@ -59,7 +59,7 @@ function activate(context) {
 		})
 	);
 }
-const svgData = '<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="16" rx="2" fill="#474747"/><text x="50%" y="50%" font-size="10" font-family="Arial" fill="#00FF00" text-anchor="middle" dominant-baseline="central">-</text></svg>';
+const svgData = '<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="16" rx="2" fill="#f7a000"/><text x="50%" y="50%" font-size="10" font-family="Arial" fill="#ffffff" text-anchor="middle" dominant-baseline="central">#</text></svg>';
 const mySvgIcon = vscode.Uri.parse(
 	`data:image/svg+xml;base64,${Buffer.from(svgData).toString('base64')}`
 );
